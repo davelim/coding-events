@@ -1,5 +1,6 @@
 using CodingEvents.Models;
 
+// Simulates a database
 namespace CodingEventsDemo.Data
 {
     public class EventData
