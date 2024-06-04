@@ -8,11 +8,11 @@
         <th>Name</th>
         <th>Description</th>
     </tr>
-    @foreach (KeyValuePair<string, string> kvp in ViewBag.events)
+    @foreach (var evt in ViewBag.events)
     {
         <tr>
-            <td>@kvp.Key</td>
-            <td>@kvp.Value</td>
+            <td>@evt.Name</td>
+            <td>@evt.Description</td>
         </tr>
     }
 </table>
