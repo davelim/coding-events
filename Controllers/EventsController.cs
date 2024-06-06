@@ -67,6 +67,7 @@ public class EventsController : Controller
             Name = editEvent.Name,
             Description = editEvent.Description,
             ContactEmail = editEvent.ContactEmail,
+            Type = editEvent.Type
         };
         ViewBag.title = "Edit Event " + editEvent.Name + "(id = " + editEvent.Id + ")";
         return View(editEventViewModel);
@@ -80,6 +81,7 @@ public class EventsController : Controller
             editEvent.Name = eventViewModel.Name;
             editEvent.Description = eventViewModel.Description;
             editEvent.ContactEmail = eventViewModel.ContactEmail;
+            editEvent.Type = eventViewModel.Type;
             return Redirect("/Events");
         }
         return View("edit", eventViewModel);
