@@ -32,7 +32,8 @@ public class EventsController : Controller
             {
                 Name = eventViewModel.Name,
                 Description = eventViewModel.Description,
-                ContactEmail = eventViewModel.ContactEmail
+                ContactEmail = eventViewModel.ContactEmail,
+                Type = eventViewModel.Type
             };
             EventData.Add(newEvent);
             return Redirect("/Events");
