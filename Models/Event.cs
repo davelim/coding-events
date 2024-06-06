@@ -2,8 +2,9 @@ namespace CodingEvents.Models;
 
 public class Event
 {
-    public string Name { get; set; }
-    public string Description {get; set;}
+    public string? Name { get; set; }
+    public string? Description {get; set;}
+    public string? ContactEmail {get; set;}
     public int Id {get;}
     static private int nextId = 1;
 
@@ -11,11 +12,12 @@ public class Event
     {
         Id = nextId++;
     }
-    public Event(string name, string description)
+    public Event(string name, string description, string contactEmail)
+      : this()
     {
         Name = name;
         Description = description;
-        Id = nextId++;
+        ContactEmail = contactEmail;
     }
     public override string ToString()
     {

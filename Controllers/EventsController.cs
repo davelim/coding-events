@@ -1,47 +1,53 @@
 using Microsoft.AspNetCore.Mvc;
 using CodingEvents.Models;
 using CodingEventsDemo.Data;
+using CodingEvents.ViewModels;
 
 namespace CodingEvents.Controllers;
 
-[Route("/Events")]
 public class EventsController : Controller
 {
-    // static private List<string> Events = new List<string>();
-    // static private Dictionary<string, string> Events = new Dictionary<string, string>();
     [HttpGet]
     public IActionResult Index()
     {
-        // List<string> Events = new List<string>() {
-        //     "Code with pride",
-        //     "Strange loops",
-        //     "Women who code"
-        // };
-        ViewBag.events = EventData.GetAll();
-        return View();
+        List<Event> events = new List<Event>(EventData.GetAll());
+        return View(events);
     }
-    [HttpGet]
-    [Route("Add/")]
+    // GET: /Events/add/
+    // retrieve form
+    [HttpGet()]
     public IActionResult Add()
     {
-        // Any additional method code here
-        return View();
+        EventViewModel eventViewModel = new EventViewModel();
+        return View(eventViewModel);
     }
-    [HttpPost]
-    [Route("Add/")]
-    public IActionResult NewEvent(Event newEvent)
+    // POST: /Events/add/
+    // process form
+    [HttpPost()]
+    public IActionResult Add(EventViewModel eventViewModel)
     {
-        // Events.Add(name, description);
-        EventData.Add(newEvent);
-        return Redirect("/Events");
+        if (ModelState.IsValid)
+        {
+            Event newEvent = new Event
+            {
+                Name = eventViewModel.Name,
+                Description = eventViewModel.Description,
+                ContactEmail = eventViewModel.ContactEmail
+            };
+            EventData.Add(newEvent);
+            return Redirect("/Events");
+        }
+        return View(eventViewModel);
     }
-    [Route("Delete/")]
+    // GET: /events/delete
+    [HttpGet]
     public IActionResult Delete()
     {
         ViewBag.events = EventData.GetAll();
         return View();
     }
-    [HttpPost("Delete/")]
+    // POST: /events/delete
+    [HttpPost]
     public IActionResult Delete(int[] eventIds)
     {
         foreach (int eventId in eventIds)
@@ -51,19 +57,30 @@ public class EventsController : Controller
 
         return Redirect("/Events");
     }
-    [HttpGet("Edit/{eventId}")]
-    public IActionResult Edit(int eventId)
+    // GET: /events/edit/{id}
+    [HttpGet("/events/edit/{eventId}")]
+    public IActionResult Edit([FromRoute]int eventId)
     {
         Event editEvent = EventData.GetById(eventId);
-        ViewBag.editEvent = editEvent;
+        EventViewModel editEventViewModel = new EventViewModel{
+            Name = editEvent.Name,
+            Description = editEvent.Description,
+            ContactEmail = editEvent.ContactEmail,
+        };
         ViewBag.title = "Edit Event " + editEvent.Name + "(id = " + editEvent.Id + ")";
-        return View();
+        return View(editEventViewModel);
     }
-    [HttpPost("Edit/{eventId}")]
-    public IActionResult SubmitEditEventForm(int eventId, string name, string description) {
-        Event editEvent = EventData.GetById(eventId);
-        editEvent.Name = name;
-        editEvent.Description = description;
-        return Redirect("/Events");
+    // POST: /events/edit/{id}
+    [HttpPost("/events/edit/{eventId}")]
+    public IActionResult SubmitEditEventForm(int eventId, EventViewModel eventViewModel) {
+        if (ModelState.IsValid)
+        {
+            Event editEvent = EventData.GetById(eventId);
+            editEvent.Name = eventViewModel.Name;
+            editEvent.Description = eventViewModel.Description;
+            editEvent.ContactEmail = eventViewModel.ContactEmail;
+            return Redirect("/Events");
+        }
+        return View("edit", eventViewModel);
     }
 }
