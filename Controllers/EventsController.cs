@@ -1,16 +1,23 @@
 using Microsoft.AspNetCore.Mvc;
+using CodingEvents.Data;
 using CodingEvents.Models;
-using CodingEventsDemo.Data;
 using CodingEvents.ViewModels;
 
 namespace CodingEvents.Controllers;
 
 public class EventsController : Controller
 {
+    private EventDbContext context;
+    // dependency injection: ASP.NET invokes constructor with an instance of
+    //   EventDbContext.
+    public EventsController(EventDbContext dbContext)
+    {
+        context = dbContext;
+    }
     [HttpGet]
     public IActionResult Index()
     {
-        List<Event> events = new List<Event>(EventData.GetAll());
+        List<Event> events = context.Events.ToList();
         return View(events);
     }
     // GET: /Events/add/
@@ -35,7 +42,8 @@ public class EventsController : Controller
                 ContactEmail = eventViewModel.ContactEmail,
                 Type = eventViewModel.Type
             };
-            EventData.Add(newEvent);
+            context.Events.Add(newEvent);
+            context.SaveChanges();
             return Redirect("/Events");
         }
         return View(eventViewModel);
@@ -44,7 +52,7 @@ public class EventsController : Controller
     [HttpGet]
     public IActionResult Delete()
     {
-        ViewBag.events = EventData.GetAll();
+        ViewBag.events = context.Events.ToList();
         return View();
     }
     // POST: /events/delete
@@ -53,8 +61,10 @@ public class EventsController : Controller
     {
         foreach (int eventId in eventIds)
         {
-            EventData.Remove(eventId);
+            Event? theEvent = context.Events.Find(eventId);
+            context.Events.Remove(theEvent);
         }
+        context.SaveChanges();
 
         return Redirect("/Events");
     }
@@ -62,7 +72,7 @@ public class EventsController : Controller
     [HttpGet("/events/edit/{eventId}")]
     public IActionResult Edit([FromRoute]int eventId)
     {
-        Event editEvent = EventData.GetById(eventId);
+        Event? editEvent = context.Events.Find(eventId);
         EventViewModel editEventViewModel = new EventViewModel{
             Name = editEvent.Name,
             Description = editEvent.Description,
@@ -77,11 +87,13 @@ public class EventsController : Controller
     public IActionResult SubmitEditEventForm(int eventId, EventViewModel eventViewModel) {
         if (ModelState.IsValid)
         {
-            Event editEvent = EventData.GetById(eventId);
+            // TODO: handle possible "editEvent" null reference(?)
+            Event? editEvent = context.Events.Find(eventId);
             editEvent.Name = eventViewModel.Name;
             editEvent.Description = eventViewModel.Description;
             editEvent.ContactEmail = eventViewModel.ContactEmail;
             editEvent.Type = eventViewModel.Type;
+            context.SaveChanges();
             return Redirect("/Events");
         }
         return View("edit", eventViewModel);
