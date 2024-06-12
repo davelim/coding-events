@@ -6,13 +6,9 @@ public class Event
     public string? Description {get; set;}
     public string? ContactEmail {get; set;}
     public EventType Type { get; set; }
-    public int Id {get;}
-    static private int nextId = 1;
+    public int Id {get; set;}
 
-    public Event()
-    {
-        Id = nextId++;
-    }
+    public Event() {}
     public Event(string name, string description, string contactEmail)
       : this()
     {
