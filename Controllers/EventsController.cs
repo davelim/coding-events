@@ -62,10 +62,12 @@ public class EventsController : Controller
         foreach (int eventId in eventIds)
         {
             Event? theEvent = context.Events.Find(eventId);
-            context.Events.Remove(theEvent);
+            if (theEvent != null)
+            {
+                context.Events.Remove(theEvent);
+            }
         }
         context.SaveChanges();
-
         return Redirect("/Events");
     }
     // GET: /events/edit/{id}

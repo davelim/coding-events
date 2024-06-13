@@ -3,8 +3,11 @@ using CodingEvents.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration["CodingEvents:ConnectionString"];
-var serverVersion = new MySqlServerVersion(new Version(8, 0, 36));
-
+var Major = builder.Configuration.GetValue<int>("MySQL:Major");
+var Minor = builder.Configuration.GetValue<int>("MySQL:Minor");
+var Build = builder.Configuration.GetValue<int>("MySQL:Build");
+var serverVersion = new MySqlServerVersion(
+      new Version(Major, Minor, Build));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
