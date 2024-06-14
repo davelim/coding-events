@@ -1,0 +1,24 @@
+@using CodingEvents.Models
+@model List<Tag>
+
+<h1>Tags</h1>
+@if (Model?.Count == 0)
+{
+    <p>No tags yet!</p>
+}
+<table>
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+    </tr>
+    @foreach (var tag in Model)
+    {
+        <tr>
+            <td>@tag.Id</td>
+            <td>@tag.Name</td>
+        </tr>
+    }
+</table>
+<p>
+    <partial name="_Links" /> @*No file extension (e.g. .cshtml), search for partial in Views/_Shared*@
+</p>
