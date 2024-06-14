@@ -15,12 +15,23 @@ public class EventsController : Controller
     {
         context = dbContext;
     }
+    // GET: /Events/
     [HttpGet]
     public IActionResult Index()
     {
         // When retrieving events, "eager load" event category.
         List<Event> events = context.Events.Include(e => e.Category).ToList();
         return View(events);
+    }
+    // GET: /Events/Detail/{id}
+    // [HttpGet("/Events/Detail/{id}")]
+    public IActionResult Detail(int id)
+    {
+        Event theEvent = context.Events
+            .Include(e => e.Category)
+            .Single(e => e.Id == id);
+        EventDetailViewModel viewModel = new EventDetailViewModel(theEvent);
+        return View(viewModel);
     }
     // GET: /Events/add/
     [HttpGet()]
