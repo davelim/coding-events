@@ -1,5 +1,6 @@
-using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
+using CodingEvents.Models;
 namespace CodingEvents.ViewModels;
 
 public class EventViewModel
@@ -12,18 +13,22 @@ public class EventViewModel
     public string? Description {get; set;}
     [EmailAddress]
     public string? ContactEmail { get; set; }
-    public EventType Type { get; set; }
-    public List<SelectListItem> EventTypes { get; set; } = new List<SelectListItem>
+    [Required(ErrorMessage = "Category is required")]
+    public int CategoryId { get; set; }
+    public List<SelectListItem>? Categories { get; set; }
+
+    public EventViewModel() {}
+    public EventViewModel(List<EventCategory> categories)
+    : this()
     {
-        new SelectListItem(EventType.Conference.ToString(), ((int)EventType.Conference).ToString()),
-        new SelectListItem(EventType.Meetup.ToString(), ((int)EventType.Meetup).ToString()),
-        new SelectListItem(EventType.Social.ToString(), ((int)EventType.Social).ToString()),
-        new SelectListItem(EventType.Workshop.ToString(), ((int)EventType.Workshop).ToString())
-    };
-    // public EventViewModel(string name, string description, string contactEmail)
-    // {
-    //     Name = name;
-    //     Description = description;
-    //     ContactEmail = contactEmail;
-    // }
+        Categories = new List<SelectListItem>();
+        foreach (var category in categories)
+        {
+            Categories.Add(new SelectListItem
+            {
+                Value = category.Id.ToString(),
+                Text = category.Name,
+            });
+        }
+    }
 }

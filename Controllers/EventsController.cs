@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using CodingEvents.Data;
 using CodingEvents.Models;
 using CodingEvents.ViewModels;
@@ -17,30 +18,32 @@ public class EventsController : Controller
     [HttpGet]
     public IActionResult Index()
     {
-        List<Event> events = context.Events.ToList();
+        // When retrieving events, "eager load" event category.
+        List<Event> events = context.Events.Include(e => e.Category).ToList();
         return View(events);
     }
     // GET: /Events/add/
-    // retrieve form
     [HttpGet()]
     public IActionResult Add()
     {
-        EventViewModel eventViewModel = new EventViewModel();
+        List<EventCategory> categories = context.Categories.ToList();
+        EventViewModel eventViewModel = new EventViewModel(categories);
         return View(eventViewModel);
     }
     // POST: /Events/add/
-    // process form
     [HttpPost()]
     public IActionResult Add(EventViewModel eventViewModel)
     {
         if (ModelState.IsValid)
         {
+            EventCategory theCategory =
+                context.Categories.Find(eventViewModel.CategoryId);
             Event newEvent = new Event
             {
                 Name = eventViewModel.Name,
                 Description = eventViewModel.Description,
                 ContactEmail = eventViewModel.ContactEmail,
-                Type = eventViewModel.Type
+                Category = theCategory
             };
             context.Events.Add(newEvent);
             context.SaveChanges();
@@ -75,27 +78,38 @@ public class EventsController : Controller
     public IActionResult Edit([FromRoute]int eventId)
     {
         Event? editEvent = context.Events.Find(eventId);
-        EventViewModel editEventViewModel = new EventViewModel{
-            Name = editEvent.Name,
-            Description = editEvent.Description,
-            ContactEmail = editEvent.ContactEmail,
-            Type = editEvent.Type
-        };
-        ViewBag.title = "Edit Event " + editEvent.Name + "(id = " + editEvent.Id + ")";
-        return View(editEventViewModel);
+        if (editEvent != null)
+        {
+            List<EventCategory> categories = context.Categories.ToList();
+            EventViewModel editEventViewModel = new EventViewModel(categories){
+                Name = editEvent.Name,
+                Description = editEvent.Description,
+                ContactEmail = editEvent.ContactEmail,
+                CategoryId = editEvent.CategoryId
+            };
+            ViewBag.title = "Edit Event " + editEvent.Name + "(id = " + editEvent.Id + ")";
+            return View(editEventViewModel);
+        }
+        return Redirect("/Events");
     }
     // POST: /events/edit/{id}
     [HttpPost("/events/edit/{eventId}")]
-    public IActionResult SubmitEditEventForm(int eventId, EventViewModel eventViewModel) {
+    public IActionResult SubmitEditEventForm(int eventId, EventViewModel eventViewModel)
+    {
         if (ModelState.IsValid)
         {
-            // TODO: handle possible "editEvent" null reference(?)
             Event? editEvent = context.Events.Find(eventId);
-            editEvent.Name = eventViewModel.Name;
-            editEvent.Description = eventViewModel.Description;
-            editEvent.ContactEmail = eventViewModel.ContactEmail;
-            editEvent.Type = eventViewModel.Type;
-            context.SaveChanges();
+            if (editEvent != null)
+            {
+                // TODO: handle
+                EventCategory theCategory =
+                    context.Categories.Find(eventViewModel.CategoryId);
+                editEvent.Name = eventViewModel.Name;
+                editEvent.Description = eventViewModel.Description;
+                editEvent.ContactEmail = eventViewModel.ContactEmail;
+                editEvent.Category = theCategory;
+                context.SaveChanges();
+            }
             return Redirect("/Events");
         }
         return View("edit", eventViewModel);

@@ -12,7 +12,7 @@
         <th>Name</th>
         <th>Description</th>
         <th>Contact Email</th>
-        <th>Event Type</th>
+        <th>Category</th>
     </tr>
     @foreach (var evt in Model)
     {
@@ -21,7 +21,7 @@
             <td>@evt.Name</td>
             <td>@evt.Description</td>
             <td>@evt.ContactEmail</td>
-            <td>@evt.Type</td>
+            <td>@evt.Category.Name</td>
             <td><a asp-controller="Events" asp-action="Edit" asp-route-id="@evt.Id">Edit Event</a></td>
         </tr>
     }
