@@ -24,7 +24,7 @@ public class EventsController : Controller
         return View(events);
     }
     // GET: /Events/Detail/{id}
-    // [HttpGet("/Events/Detail/{id}")]
+    [HttpGet("/Events/Detail/{id}")]
     public IActionResult Detail(int id)
     {
         Event theEvent = context.Events

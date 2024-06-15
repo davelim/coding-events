@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using CodingEvents.Data;
 using CodingEvents.Models;
 using CodingEvents.ViewModels;
@@ -37,5 +38,30 @@ public class TagsController: Controller
             return Redirect("index");
         }
         return View("create", addTagViewModel);
+    }
+    // GET: /Tags/AddEvent/{id}
+    [HttpGet("/Tags/AddEvent/{id}")]
+    public IActionResult AddEvent(int id)
+    {
+        Event theEvent = context.Events.Find(id);
+        List<Tag> possibleTags = context.Tags.ToList();
+        AddEventTagViewModel viewModel = new AddEventTagViewModel(theEvent, possibleTags);
+        return View(viewModel);
+    }
+    // POST: /Tags/AddEvent/{id}
+    [HttpPost("/Tags/AddEvent/{id}")]
+    public IActionResult AddEvent(AddEventTagViewModel viewModel)
+    {
+        if (ModelState.IsValid)
+        {
+            int eventId = viewModel.EventId;
+            int tagId = viewModel.TagId;
+            Event theEvent = context.Events.Include(e => e.Tags).Where(e => e.Id == eventId).First();
+            Tag theTag = context.Tags.Where(t => t.Id == tagId).First();
+            theEvent.Tags.Add(theTag);
+            context.SaveChanges();
+            return Redirect("/Events/Detail/" + eventId);
+        }
+        return View(viewModel);
     }
 }
