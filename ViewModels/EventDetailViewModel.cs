@@ -1,3 +1,4 @@
+using System.Text;
 using CodingEvents.Models;
 
 namespace CodingEvents.ViewModels;
@@ -8,6 +9,7 @@ public class EventDetailViewModel
     public string Description { get; set; }
     public string ContactEmail { get; set; }
     public string CategoryName { get; set; }
+    public string TagText { get; set; }
 
     public EventDetailViewModel(Event theEvent)
     {
@@ -16,5 +18,10 @@ public class EventDetailViewModel
         Description = theEvent.Description;
         ContactEmail = theEvent.ContactEmail;
         CategoryName = theEvent.Category.Name;
+        TagText = theEvent.Tags != null
+                    ? String.Join(", ", theEvent.Tags
+                                        .Select(elmt => $"#{elmt.Name}")
+                                        .ToArray())
+                    : "";
     }
 }

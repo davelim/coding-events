@@ -15,7 +15,13 @@
     {
         <tr>
             <td>@tag.Id</td>
-            <td>@tag.Name</td>
+            <td>
+                <a asp-controller="Tags"
+                   asp-action="Detail"
+                   asp-route-id="@tag.Id">
+                    @tag.Name
+                </a>
+            </td>
         </tr>
     }
 </table>

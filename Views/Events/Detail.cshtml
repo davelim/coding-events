@@ -15,4 +15,9 @@
         <th>Category</th>
         <td>@Model.CategoryName</td>
     </tr>
+    <tr>
+        <th>Tags</th>
+        <td>@Model.TagText</td>
+    </tr>
 </table>
+<a asp-controller="Tags" asp-action="AddEvent" asp-route-id="@Model.EventId">Add Tag</a>

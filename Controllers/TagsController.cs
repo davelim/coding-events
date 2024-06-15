@@ -19,6 +19,15 @@ public class TagsController: Controller
         List<Tag> tags = context.Tags.ToList();
         return View(tags);
     }
+    // GET: /Tags/Detail/{id}
+    [HttpGet("/Tags/Detail/{id}")]
+    public IActionResult Detail(int id)
+    {
+        Tag theTag = context.Tags
+                     .Include(e => e.Events)
+                     .Where(t => t.Id == id).First();
+        return View(theTag);
+    }
     // GET: /Tags/Create
     [HttpGet("/Tags/Create")]
     public IActionResult Create()
