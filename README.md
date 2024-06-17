@@ -9,7 +9,7 @@ Currently app provides following functionality:
 # Future improvements
 Allow a person to signup for notifications about an event. So provide following high-level functionality:
 - create/edit/remove user account
-- mark event(s) for which user wants update
+- mark event(s) for which user wants update\
 One way of doing this:
 - Person class, with properties: Id, Name, Password, EmailAddr, List<Event>
 - eventdbcontext: add join table for Person & Event
