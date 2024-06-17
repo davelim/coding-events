@@ -7,6 +7,8 @@ Currently app provides following functionality:
 3. create tags
 4. add tag(s) to an event
 # Future improvements
+## Links: reorganize links/navbar so stuff is more intuitive
+## Person
 Allow a person to signup for notifications about an event. So provide following high-level functionality:
 - create/edit/remove user account
 - mark event(s) for which user wants update\
