@@ -1,11 +1,14 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CodingEvents.Data;
 using CodingEvents.Models;
 using CodingEvents.ViewModels;
 
+
 namespace CodingEvents.Controllers;
 
+[Authorize]
 public class EventsController : Controller
 {
     private EventDbContext context;
@@ -15,6 +18,7 @@ public class EventsController : Controller
     {
         context = dbContext;
     }
+    [AllowAnonymous]
     // GET: /Events/
     [HttpGet]
     public IActionResult Index()

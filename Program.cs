@@ -19,8 +19,15 @@ builder.Services.AddDbContext<EventDbContext>(
 // register ASP.NET-provide "auth" services
 builder.Services.AddRazorPages();
 builder.Services
-    .AddDefaultIdentity<IdentityUser>(
-        options => options.SignIn.RequireConfirmedAccount = true)
+    .AddDefaultIdentity<IdentityUser>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = true;
+        options.Password.RequireDigit = false;
+        options.Password.RequiredLength = 10;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = true;
+        options.Password.RequireLowercase = false;
+    })
     .AddEntityFrameworkStores<EventDbContext>();
 
 var app = builder.Build();
