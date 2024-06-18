@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using CodingEvents.Data;
 
@@ -15,6 +16,12 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<EventDbContext>(
     dbContextOptions => dbContextOptions.UseMySql(
         connectionString, serverVersion));
+// register ASP.NET-provide "auth" services
+builder.Services.AddRazorPages();
+builder.Services
+    .AddDefaultIdentity<IdentityUser>(
+        options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<EventDbContext>();
 
 var app = builder.Build();
 
@@ -32,6 +39,9 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+// Identity pages should follow the routing laid out in _LoginPartial.cshtml
+app.MapRazorPages();
+app.MapControllers();
 
 app.MapControllerRoute(
     name: "default",
